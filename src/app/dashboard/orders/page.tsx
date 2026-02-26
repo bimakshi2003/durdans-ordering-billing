@@ -23,7 +23,6 @@ import {
     Search,
     Filter,
     Plus,
-    MoreVertical,
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react';
@@ -282,7 +281,7 @@ export default function AllOrdersPage() {
                                 <TableHead className="font-semibold text-gray-700">TESTS SUMMARY</TableHead>
                                 <TableHead className="font-semibold text-gray-700">TOTAL AMOUNT</TableHead>
                                 <TableHead className="font-semibold text-gray-700">STATUS</TableHead>
-                                <TableHead className="font-semibold text-gray-700">ACTIONS</TableHead>
+                                <TableHead className="font-semibold text-gray-700 text-center">ACTIONS</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -324,9 +323,14 @@ export default function AllOrdersPage() {
                                                 {order.status.replace('_', ' ')}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell>
-                                            <Button variant="ghost" size="sm">
-                                                <MoreVertical className="w-4 h-4" />
+                                        <TableCell className="text-center">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                                onClick={() => router.push(`/dashboard/orders/${order.id}`)}
+                                            >
+                                                View Order
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -343,7 +347,6 @@ export default function AllOrdersPage() {
                     Showing {filtered.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1} to{' '}
                     {Math.min(currentPage * PAGE_SIZE, filtered.length)} of {filtered.length} entries
                 </p>
-                \page.tsx
                 <div className="flex items-center gap-2">
                     <Button
                         variant="outline"
