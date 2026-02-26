@@ -343,6 +343,7 @@ export default function AllOrdersPage() {
                     Showing {filtered.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1} to{' '}
                     {Math.min(currentPage * PAGE_SIZE, filtered.length)} of {filtered.length} entries
                 </p>
+                \page.tsx
                 <div className="flex items-center gap-2">
                     <Button
                         variant="outline"

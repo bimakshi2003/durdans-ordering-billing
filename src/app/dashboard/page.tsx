@@ -13,13 +13,11 @@ import {
     Banknote,
     ShoppingCart,
     CreditCard,
-    MoreVertical,
     Calendar,
-    Printer
+    ArrowRight
 } from 'lucide-react';
 import { formatCurrency, STATUS_COLORS } from '@/constants';
 import type { TestOrder, Bill } from '@/types';
-import { toast } from 'sonner';
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
@@ -73,9 +71,7 @@ const mockBills: Bill[] = [
         patientPhone: '+94 77 123 4567',
         orderDate: '2023-10-24',
         billDate: '2023-10-24',
-        tests: [
-            { testCode: 'LBT-001', testName: 'Complete Blood Count (CBC)', quantity: 1, unitPrice: 1200, totalPrice: 1200 }
-        ],
+        tests: [],
         subtotal: 4500,
         serviceCharge: 0,
         discount: 0,
@@ -106,8 +102,6 @@ const mockBills: Bill[] = [
     },
 ];
 
-// ─── Stats per period ─────────────────────────────────────────────────────────
-
 const STATS_BY_PERIOD = {
     '7': { testOrdersToday: 124, overduePayments: 18, partialPayments: 12, totalRevenueToday: 452300, trend: '+8%' },
     '30': { testOrdersToday: 540, overduePayments: 42, partialPayments: 35, totalRevenueToday: 1920000, trend: '+12%' },
@@ -115,8 +109,6 @@ const STATS_BY_PERIOD = {
 };
 
 type Period = '7' | '30' | '90';
-
-// ─── Page Component ───────────────────────────────────────────────────────────
 
 export default function OrdersBillingDashboard() {
     const router = useRouter();
@@ -129,12 +121,10 @@ export default function OrdersBillingDashboard() {
         '90': 'Last 90 days',
     };
 
-    // ── Toggle period ──────────────────────────────────────────────────────
     const cyclePeriod = () => {
         setPeriod((p) => (p === '7' ? '30' : p === '30' ? '90' : '7'));
     };
 
-    // ── Table columns ──────────────────────────────────────────────────────
     const orderColumns = [
         { header: 'ORDER ID', accessor: 'orderId' as const, className: 'font-medium' },
         { header: 'PATIENT NAME', accessor: 'patientName' as const },
@@ -164,9 +154,13 @@ export default function OrdersBillingDashboard() {
         },
         {
             header: 'ACTIONS',
-            accessor: () => (
-                <Button variant="ghost" size="sm">
-                    <MoreVertical className="w-4 h-4" />
+            accessor: (row: TestOrder) => (
+                <Button
+                    variant="link"
+                    className="text-blue-600 p-0 h-auto font-normal flex items-center gap-1 hover:text-blue-700 transition-colors"
+                    onClick={() => router.push(`/dashboard/orders/${row.id}`)}
+                >
+                    VIEW ORDER <ArrowRight className="w-4 h-4" />
                 </Button>
             ),
         },
@@ -191,7 +185,7 @@ export default function OrdersBillingDashboard() {
                     {formatCurrency(row.outstandingAmount)}
                 </span>
             ),
-            className: 'text-right',
+            className: 'text-right pr-20',
         },
         {
             header: 'STATUS',
@@ -204,16 +198,17 @@ export default function OrdersBillingDashboard() {
                     {row.paymentStatus}
                 </Badge>
             ),
+            className: '',
         },
         {
             header: 'ACTIONS',
             accessor: (row: Bill) => (
                 <Button
-                    variant="ghost"
-                    size="sm"
+                    variant="link"
+                    className="text-blue-600 p-0 h-auto font-normal flex items-center gap-1 hover:text-blue-700 transition-colors"
                     onClick={() => router.push(`/dashboard/bills/${row.id}`)}
                 >
-                    <Printer className="w-4 h-4 text-blue-600" />
+                    VIEW BILL <ArrowRight className="w-4 h-4" />
                 </Button>
             ),
         },
@@ -221,7 +216,6 @@ export default function OrdersBillingDashboard() {
 
     return (
         <div className="p-8">
-            {/* ── Header ── */}
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Orders & Billing Dashboard</h1>
@@ -229,14 +223,12 @@ export default function OrdersBillingDashboard() {
                         Manage laboratory test orders, billing statuses, and financial summaries.
                     </p>
                 </div>
-                {/* Last X days — cycles between 7 / 30 / 90 on click */}
                 <Button variant="outline" className="gap-2" onClick={cyclePeriod}>
                     <Calendar className="w-4 h-4" />
                     {periodLabels[period]}
                 </Button>
             </div>
 
-            {/* ── Stats Grid ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <StatCard
                     title="Test Orders Today"
@@ -269,9 +261,7 @@ export default function OrdersBillingDashboard() {
                 />
             </div>
 
-            {/* ── Action Buttons ── */}
             <div className="flex gap-3 mb-8">
-                {/* ✅ Navigates to Create Test Order page */}
                 <Button
                     className="bg-blue-600 hover:bg-blue-700"
                     onClick={() => router.push('/dashboard/create-order')}
@@ -280,24 +270,22 @@ export default function OrdersBillingDashboard() {
                     Create New Test Order
                 </Button>
 
-                {/* ✅ Navigates to Bills & Payments page */}
+                {/* ── UPDATED BUTTON ── */}
                 <Button
                     variant="outline"
-                    onClick={() => router.push('/dashboard/bills')}
+                    onClick={() => router.push('/dashboard/payments/new')}
                 >
                     <CreditCard className="w-4 h-4 mr-2" />
                     Record Payment
                 </Button>
             </div>
 
-            {/* ── Recent Test Orders ── */}
             <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold">Recent Test Orders</h2>
-                    {/* ✅ Navigates to All Orders page (to be built) */}
                     <Button
                         variant="link"
-                        className="text-blue-600"
+                        className="text-blue-600 p-0 h-auto font-normal hover:text-blue-700"
                         onClick={() => router.push('/dashboard/orders')}
                     >
                         View All →
@@ -306,14 +294,12 @@ export default function OrdersBillingDashboard() {
                 <DataTable data={mockOrders} columns={orderColumns} />
             </div>
 
-            {/* ── Recent Bills ── */}
             <div>
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold">Recent Bills</h2>
-                    {/* ✅ Navigates to Bills & Payments page */}
                     <Button
                         variant="link"
-                        className="text-blue-600"
+                        className="text-blue-600 p-0 h-auto font-normal hover:text-blue-700"
                         onClick={() => router.push('/dashboard/bills')}
                     >
                         View All →

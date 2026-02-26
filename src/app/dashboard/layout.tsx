@@ -10,13 +10,13 @@ import { usePathname } from 'next/navigation';
 const sidebarItems = [
     { label: 'Orders & Billing Dashboard', href: '/dashboard', icon: '📊' },
     { label: 'Create Test Order', href: '/dashboard/create-order', icon: '🛒' },
+    { label: 'Record Payment', href: '/dashboard/payments/new', icon: '💰' },
     { label: 'Bills & Payments', href: '/dashboard/bills', icon: '💳' },
     { label: 'Payment History', href: '/dashboard/payment-history', icon: '🕐' },
 ];
 
 const reportItems = [
     { label: 'Revenue Analysis', href: '/dashboard/revenue-analysis', icon: '📈' },
-    { label: 'Tax Invoices', href: '/dashboard/tax-invoices', icon: '📄' },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
